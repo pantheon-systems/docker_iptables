@@ -1,0 +1,4 @@
+test:
+    override:
+        - pylint docker_iptabes.py
+        - python setup.py test
