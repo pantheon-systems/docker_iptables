@@ -2,10 +2,6 @@
 #
 #pylint: disable=line-too-long,invalid-name,missing-docstring,redefined-outer-name,too-many-arguments,too-many-locals,too-many-statements
 #
-#
-
-
-DEBUG = True
 
 import os
 import sys
