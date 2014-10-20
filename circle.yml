@@ -4,5 +4,5 @@ dependencies:
 
 test:
     override:
-        - pylint docker_iptabes.py
+        - pylint docker_iptables/docker_iptables.py
         - python setup.py test
