@@ -1,4 +1,8 @@
+dependencies:
+    override:
+        - pip install pylint
+
 test:
     override:
-        - python setup.py test
         - pylint docker_iptabes.py
+        - python setup.py test
