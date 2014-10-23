@@ -64,6 +64,18 @@ def docker_inspect(container_name, max_attempts=20):
         raise RuntimeError('Retries exhausted waiting for {} to become available'.format(container_name))
 
 
+def wait_until_running(container_name, max_attempts=20):
+    attempts = 0
+    success = False
+    while attempts < max_attempts and not success:
+        container_data = docker_inspect(container_name)
+        if container_data['State']['Running'] is True:
+            return True
+        time.sleep(0.1)
+        attempts += 1
+    raise RuntimeError('timed out waiting for {} to enter running state.'.format(container_name))
+
+
 def create_ipv4_nat_rule(chain, bridge, proto, host_port, container_ip, container_port):
     """return a iptables v4 nat rule for forwarding a host port to a container IP:port"""
     return '-A {chain} ! -i {bridge} -p {proto} -m {proto}' \
@@ -162,8 +174,14 @@ def main(args):
         filter6_rules = []
 
         try:
+            wait_until_running(container)
+        except RuntimeError as e:
+            log.error('Error occurred while waiting for container to start: {}'.format(e))
+            sys.exit(1)
+
+        try:
             container_data = docker_inspect(container)
-        except subprocess.CalledProcessError as e:
+        except RuntimeError as e:
             log.error('Error retrieving container data, container: {}": {}'.format(container, e))
             sys.exit(1)
 

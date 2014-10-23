@@ -90,6 +90,24 @@ class TestDockerIptables(unittest.TestCase):
         self.assertEqual(expected, rule)
 
     @mock.patch('docker_iptables.docker_inspect')
+    def test_wait_until_running(self, mock_inspect):
+        inspect_json = """
+        {
+            "State": {
+                "ExitCode": 0,
+                "FinishedAt": "0001-01-01T00:00:00Z",
+                "Paused": false,
+                "Pid": 16274,
+                "Restarting": false,
+                "Running": true,
+                "StartedAt": "2014-10-23T18:42:33.833945172Z"
+            }
+        }
+        """
+        mock_inspect.return_value = json.loads(inspect_json)
+        self.assertTrue(wait_until_running('container-1'))
+
+    @mock.patch('docker_iptables.docker_inspect')
     @mock.patch('subprocess.call')
     @mock.patch('os.path.exists')
     @mock.patch('os.remove')
@@ -121,6 +139,15 @@ class TestDockerIptables(unittest.TestCase):
                         }
                     ]
                 }
+            },
+            "State": {
+                "ExitCode": 0,
+                "FinishedAt": "0001-01-01T00:00:00Z",
+                "Paused": false,
+                "Pid": 16274,
+                "Restarting": false,
+                "Running": true,
+                "StartedAt": "2014-10-23T18:42:33.833945172Z"
             }
         }
         """
@@ -133,7 +160,7 @@ class TestDockerIptables(unittest.TestCase):
         # print mock_open.mock_calls
 
         # verify `docker inspect <container_name>` was executed
-        mock_inspect.assert_called_once_with(args.container_name)
+        mock_inspect.assert_any_call(args.container_name)
 
         # verify iptables and ip6tables were created with proper paths
         mock_open.assert_any_call(os.path.join(args.iptables_dir, '11-docker-container_' + args.container_name), 'w')

@@ -73,3 +73,10 @@ Testing
 1. run unit tests: `python setup.py test`
 2. run pylint test: `pylint docker_iptables.py`
 
+Contributing
+------------
+
+1. Do work in a branch
+2. Add tests, ensure tests pass on Circle
+3. Bump version in `setup.py` in your branch
+4. Send PR to `master` branch
