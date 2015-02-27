@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-#pylint: disable=line-too-long,invalid-name,missing-docstring,redefined-outer-name,too-many-arguments,too-many-locals,too-many-statements
+#pylint: disable=line-too-long,invalid-name,missing-docstring,redefined-outer-name,too-many-arguments,too-many-locals,too-many-statements,logging-format-interpolation
 #
 
 import os
@@ -197,6 +197,10 @@ def main(args):
         for (container_map, host_map) in mappings.iteritems():
             # `container_map` example: (String): "5000/tcp"
             # `host_map`      example: list of single dict: [{u'HostPort': u'5001', u'HostIp': u'0.0.0.0'}]
+            #                          host_map may also be None in the case of an EXPOSED port that is not published.
+            if not host_map:
+                log.debug('exposed port {} is not published, skipping.'.format(container_map))
+                continue
             (container_port, proto) = container_map.split('/')
             host_ip = host_map[0]['HostIp']
             host_port = host_map[0]['HostPort']

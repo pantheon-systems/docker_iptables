@@ -132,6 +132,7 @@ class TestDockerIptables(unittest.TestCase):
                 "IPPrefixLen": 16,
                 "PortMapping": null,
                 "Ports": {
+                    "8000/tcp": null,
                     "5001/tcp": [
                         {
                             "HostIp": "0.0.0.0",
